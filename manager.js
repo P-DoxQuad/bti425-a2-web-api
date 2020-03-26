@@ -11,8 +11,9 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 
-const vehicleSchema = require("./vehicle-schema.js");                                // Assigning Mongoose Schema to variable.
-
+const termEnglishSchema = require("./msc-termEnglish.js");                                // Assigning Mongoose Schema to variable.
+const termNonEnglishSchema = require("./msc-termNonEnglish.js");   
+const definitionSchema = require("./msc-definition.js");   
 //var vehicleManager = mongoose.model("db-a1", vehicleSchema);
 
 
@@ -21,18 +22,18 @@ const vehicleSchema = require("./vehicle-schema.js");                           
 /******************************************************************************
  * Initializes Connection to Database                                         *
  ******************************************************************************/
-let Vehicles;                                                                        // Collection Properties
+let Dictionary;                                                                        // Collection Properties
 module.exports.initialize = function() {
     return new Promise(function(resolve, reject) {
-        let db = mongoose.createConnection("mongodb://dbuser:1234@cluster1-shard-00-00-hc4tf.gcp.mongodb.net:27017,cluster1-shard-00-01-hc4tf.gcp.mongodb.net:27017,cluster1-shard-00-02-hc4tf.gcp.mongodb.net:27017/db-a1?ssl=true&replicaSet=cluster1-shard-0&authSource=admin&retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+        let db = mongoose.createConnection("mongodb://dbuser:1234@cluster1-shard-00-00-6v28c.mongodb.net:27017,cluster1-shard-00-01-6v28c.mongodb.net:27017,cluster1-shard-00-02-6v28c.mongodb.net:27017/test?ssl=true&replicaSet=cluster1-shard-0&authSource=admin&retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
         autoIncrement.initialize(db);
 
         db.on('error', function (err) {
             reject(console.log(err.message));                                        // If connection error, Reject the promise with the provided error.
         });
         db.once('open', function () {
-            vehicleSchema.plugin(autoIncrement.plugin, 'vehicles');
-            Vehicles = db.model("db-a1", vehicleSchema, "vehicles");                 // Create a vehicle model from schema above.
+            //vehicleSchema.plugin(autoIncrement.plugin, 'vehicles');
+            Dictionary = db.model("db-a2", termEnglishSchema, "English Terms");                 // Create a dictionary model from schema above.
             
             resolve(console.log("Database Connected"));
         });
@@ -43,13 +44,13 @@ module.exports.initialize = function() {
 /******************************************************************************
  * Retreives list of all vehicles from the Database                           *
  ******************************************************************************/
-module.exports.vehicleGetAll = function() {
+module.exports.termsEnglishGetAll = function() {
     console.log("Getting All Vehicles...");
     return new Promise(function(resolve, reject) {
         Vehicles.find()
-          //.limit(10)
+          .limit(10)
           .lean()
-          .sort({_id: 'asc', make: 'asc', model: 'asc', year: 'asc' })
+          .sort({wordEnglish: 'asc'})
           .exec(function (error, items) {
             if (error) {
               // Query error
@@ -66,7 +67,7 @@ module.exports.vehicleGetAll = function() {
 /******************************************************************************
  * Retreives individual vehicle by VIN from the Database                       *
  ******************************************************************************/
-module.exports.vehicleGetByVin = function (vinNum) {
+module.exports.termsEnglishGetByVin = function (vinNum) {
     console.log("Getting Vehicle By VIN...");
     return new Promise(function (resolve, reject) {
         // Find one specific document

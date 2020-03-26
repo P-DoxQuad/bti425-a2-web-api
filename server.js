@@ -40,13 +40,15 @@ app.use(bodyParser.urlencoded({extended: true}));
  * **************************************************************************/
 app.get("/api", function(req, res) {
   const links = [];
-  links.push({ "rel": "collection", "href": "/api/vehicles", "methods": "GET,POST" });
-  links.push({ "rel": "collection", "href": "/api/vehicles/:vin", "methods": "GET,PUT,DELETE" });
-  links.push({ "rel": "collection", "href": "/api/vehicles/:id", "methods": "GET,PUT,DELETE" });
+  links.push({ "rel": "collection", "href": "/api/terms/english", "methods": "GET,POST" });
+  links.push({ "rel": "collection", "href": "/api/terms/other", "methods": "GET,PUT,DELETE" });
+  //links.push({ "rel": "collection", "href": "/api/vehicles", "methods": "GET,PUT,DELETE" });
   const linkObject = { 
     "links": links, 
-    "apiVersion": "1.0", 
-    "apiName": "Vehicle Manager API Version 1" 
+    "apiVersion": "1.0",
+    "apiAuthor": "Michael Dzura", 
+    "apiName": "Wep API for Assignment #2",
+    "apiDescription"
   };
   res.json(linkObject);
 });
@@ -63,9 +65,9 @@ app.get("/", (req, res) => {                                      // Deliver the
 });
 
 // ******************* Get all ****************************//
-app.get("/api/vehicles", function (req, res) {
+app.get("/api/terms/english", function (req, res) {
   // Call the manager method
-  manager.vehicleGetAll()
+  manager.termsEnglishGetAll()
          .then(function (data) {
            res.json(data);
          })
