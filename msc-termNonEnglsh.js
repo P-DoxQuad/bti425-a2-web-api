@@ -12,7 +12,7 @@ var termNonEnglishSchema = new Schema({
   wordEnglish: String,
   wordNonEnglish: String,
   wordExpanded: String,
-  languageCode: Number,
+  languageCode: String,
   image: String,
   imageType: String,
   audio: String,
@@ -21,13 +21,16 @@ var termNonEnglishSchema = new Schema({
   linkWikipedia: String,
   linkYouTube: String,
   authorName: String,
-  dateCreated: Date,
-  dateRevised: Date,
+  dateCreated: String,
+  dateRevised: String,
   fieldOfStudy: String,
   helpYes: Number,
   helpNo: Number,
   definition: [definitionScheme]
-});
+}, {
+  versionKey: true
+}
+);
 
 // Make schema available to the application
 module.exports = termNonEnglishSchema;

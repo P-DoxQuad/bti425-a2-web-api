@@ -3,15 +3,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var definitionScheme = require('./msc-definition.js');
+var definitionScheme = require("./msc-definition.js");
 
 // English Term Schema
-
 var termEnglishSchema = new Schema({
   wordEnglish: String,
   wordNonEnglish: String,
   wordExpanded: String,
-  languageCode: Number,
+  languageCode: String,
   image: String,
   imageType: String,
   audio: String,
@@ -20,13 +19,16 @@ var termEnglishSchema = new Schema({
   linkWikipedia: String,
   linkYouTube: String,
   authorName: String,
-  dateCreated: Date,
-  dateRevised: Date,
+  dateCreated: String,
+  dateRevised: String,
   fieldOfStudy: String,
   helpYes: Number,
   helpNo: Number,
   definition: [definitionScheme]
-});
+}, {
+versionKey: true
+}
+);
 
 // Make schema available to the application
 module.exports = termEnglishSchema;

@@ -7,7 +7,7 @@ var Schema = mongoose.Schema;
 
 var definitionSchema = new Schema({
   authorName: String,
-  dateCreated: Date,
+  dateCreated: String,
   definition: String,
   quality: Number,
   likes: Number
