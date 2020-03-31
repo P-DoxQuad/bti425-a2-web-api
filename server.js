@@ -1,5 +1,5 @@
 /*********************************************************************************
- * BTI425 – Assignment 1 
+ * BTI425 – Assignment 2 
  * I declare that this assignment is my own work in accordance with Seneca Academic Policy. 
  * No part of this assignment has been copied manually or electronically from any other source 
  * (including 3rd-party web sites) or distributed to other students. 
@@ -48,7 +48,7 @@ app.get("/api", function(req, res) {
     "apiVersion": "1.0",
     "apiAuthor": "Michael Dzura", 
     "apiName": "Wep API for Assignment #2",
-    "apiDescription"
+    "apiDescription": "Dictionary Data for Techical Terms"
   };
   res.json(linkObject);
 });
@@ -77,12 +77,11 @@ app.get("/api/terms/english", function (req, res) {
 });
 /************************************************************/
 
-// *************** Get one by vin *************************//
-app.get("/api/vehicles/vin/:id", function (req, res) {
-  
-  manager.vehicleGetByVin(req.params.id)                        // Call the manager method
-  .then(function (data) {
-    res.json(data);
+/********************** Get By Name *************************/
+app.get("/api/terms/english/:text", function(req, res) {
+  manager.termsEnglishGetName(req.params.text)
+         .then(function (data) {
+          res.json(data);
   })
   .catch(function() {
     res.status(404).json({ "message": "Resource not found" });
@@ -92,10 +91,9 @@ app.get("/api/vehicles/vin/:id", function (req, res) {
 
 // ******************* Get one by id **********************//
 app.get("/api/vehicles/:id", function (req, res) {
-  
   manager.vehicleGetById(req.params.id)                         // Call the manager method
-  .then(function (data) {
-    res.json(data);
+         .then(function (data) {
+          res.json(data);
   })
   .catch(function() {
     res.status(404).json({ "message": "Resource not found" });
@@ -105,7 +103,6 @@ app.get("/api/vehicles/:id", function (req, res) {
 
 // ********************** Add new **************************//
 app.post("/api/vehicle", function (req, res) {
-  
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
   res.setHeader("Access-Control-Allow-Headers", "Authorization, Cache-Control, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
   console.log("POSTING data");
@@ -119,6 +116,7 @@ app.post("/api/vehicle", function (req, res) {
          })
 });
 /*************************************************************/
+
 // ***************** Edit existing **************************//
 app.put("/api/vehicles/:id", function (req, res) {
 

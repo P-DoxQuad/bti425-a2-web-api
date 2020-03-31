@@ -12,9 +12,8 @@ mongoose.set('useCreateIndex', true);
 
 
 const termEnglishSchema = require("./msc-termEnglish.js");                                // Assigning Mongoose Schema to variable.
-const termNonEnglishSchema = require("./msc-termNonEnglish.js");   
-const definitionSchema = require("./msc-definition.js");   
-//var vehicleManager = mongoose.model("db-a1", vehicleSchema);
+const termNonEnglishSchema = require("./msc-termNonEnglsh");   
+const definitionSchema = require("./msc-definition");   
 
 
 
@@ -25,16 +24,19 @@ const definitionSchema = require("./msc-definition.js");
 let Dictionary;                                                                        // Collection Properties
 module.exports.initialize = function() {
     return new Promise(function(resolve, reject) {
-        let db = mongoose.createConnection("mongodb://dbuser:1234@cluster1-shard-00-00-6v28c.mongodb.net:27017,cluster1-shard-00-01-6v28c.mongodb.net:27017,cluster1-shard-00-02-6v28c.mongodb.net:27017/test?ssl=true&replicaSet=cluster1-shard-0&authSource=admin&retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
-        autoIncrement.initialize(db);
+        //let db = mongoose.createConnection("mongodb://dbuser:1234@cluster1-shard-00-00-6v28c.mongodb.net:27017,cluster1-shard-00-01-6v28c.mongodb.net:27017,cluster1-shard-00-02-6v28c.mongodb.net:27017/test?ssl=true&replicaSet=cluster1-shard-0&authSource=admin&retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+
+        let db = mongoose.createConnection("mongodb://192.168.0.21:27017");
+        //autoIncrement.initialize(db);
 
         db.on('error', function (err) {
             reject(console.log(err.message));                                        // If connection error, Reject the promise with the provided error.
         });
         db.once('open', function () {
             //vehicleSchema.plugin(autoIncrement.plugin, 'vehicles');
-            Dictionary = db.model("db-a2", termEnglishSchema, "English Terms");                 // Create a dictionary model from schema above.
+            Dictionary = db.model("db-a2", termEnglishSchema, "englishterms");                 // Create a dictionary model from schema above.
             
+            console.log(Dictionary);
             resolve(console.log("Database Connected"));
         });
     });
@@ -45,12 +47,12 @@ module.exports.initialize = function() {
  * Retreives list of all vehicles from the Database                           *
  ******************************************************************************/
 module.exports.termsEnglishGetAll = function() {
-    console.log("Getting All Vehicles...");
+    console.log("Getting All English Terms...");
     return new Promise(function(resolve, reject) {
-        Vehicles.find()
-          .limit(10)
-          .lean()
-          .sort({wordEnglish: 'asc'})
+        Dictionary.find()
+          //.limit(10)
+          //.lean()
+          //.sort({wordEnglish: 'asc'})
           .exec(function (error, items) {
             if (error) {
               // Query error
@@ -67,11 +69,11 @@ module.exports.termsEnglishGetAll = function() {
 /******************************************************************************
  * Retreives individual vehicle by VIN from the Database                       *
  ******************************************************************************/
-module.exports.termsEnglishGetByVin = function (vinNum) {
-    console.log("Getting Vehicle By VIN...");
+module.exports.termsEnglishGetByID = function (id) {
+    console.log("Getting English Term By ID...");
     return new Promise(function (resolve, reject) {
         // Find one specific document
-        Vehicles.findOne({"vin": vinNum}, function(error, data) {
+        Dictionary.findOne({"_id": id}, function(error, data) {
             if (error) {
                 // Find/match is not found
                 return reject(error.message);
@@ -91,11 +93,14 @@ module.exports.termsEnglishGetByVin = function (vinNum) {
 /******************************************************************************
  * Retreives individual vehicle by ID from the Database                       *
  ******************************************************************************/
-module.exports.vehicleGetById = function (byId) {
-    console.log("Getting Vehicle By ID...");
+module.exports.termsEnglishGetName = function (text) {
+    console.log("Getting English Term By Name...");
     return new Promise(function (resolve, reject) {
+
+        text = decodeURIComponent(text);
+
         // Find one specific document
-        Vehicles.findOne({"_id": byId}, function(error, data) {
+        Dictionary.find({ wordEnglish: { $regex: text, $options: "i"}}, function(error, data) {
             if (error) {
                 // Find/match is not found
                 return reject(error.message);
@@ -115,12 +120,12 @@ module.exports.vehicleGetById = function (byId) {
 /******************************************************************************
  * Add Vehicle to the Database                                                *
  ******************************************************************************/
-module.exports.vehicleAdd = function (newItem) {
-    console.log("Adding Vehicle to Collection...");
+module.exports.termEnglishAdd = function (newItem) {
+    console.log("Adding English Term to Collection...");
     console.log(newItem);
     return new Promise(function (resolve, reject) {
         // Find one specific document
-        Vehicles.create(newItem, function (error, item) {
+        Dictionary.create(newItem, function (error, item) {
             if (error) {
               // Cannot add item
               return reject(console.log(error.message));
@@ -135,13 +140,13 @@ module.exports.vehicleAdd = function (newItem) {
 /******************************************************************************
  * Edit existing vehicle from the Database                                    *
  ******************************************************************************/
-module.exports.vehicleEdit = function (changes) {
-    console.log("Editing Vehicle in Collection...");
+module.exports.termEnglishEdit = function (changes) {
+    console.log("Editing English Term in Collection...");
     console.log("Changes: " + changes);
 
     return new Promise(function (resolve, reject) {
         // Find one specific document
-        Vehicles.findByIdAndUpdate(changes.id, 
+        Dictionary.findByIdAndUpdate(changes.id, 
             {
                 id: changes.id,
                 make: changes.make,
@@ -176,12 +181,12 @@ module.exports.vehicleEdit = function (changes) {
 /******************************************************************************
  * Delete vehicle from the Database                                           *
  ******************************************************************************/
-module.exports.vehicleDelete = function (itemId) {
-    console.log("Deleting Vehicle By ID...");
+module.exports.termEnglishDelete = function (itemId) {
+    console.log("Deleting English Term By ID...");
     console.log(itemId);
     return new Promise(function (resolve, reject) {
         // Find one specific document
-        Vehicles.deleteOne({"_id": itemId}, function (error) {
+        Dictionary.deleteOne({"_id": itemId}, function (error) {
             if (error) {
               // Cannot delete item
               console.log(error.message);
