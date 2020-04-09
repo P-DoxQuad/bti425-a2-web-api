@@ -4,14 +4,14 @@
  * middleware interface between NodeJS and MongoDB.                           *
  ******************************************************************************/ 
 
-const mongoose = require("mongoose");                                                 // Linking Mongoose module.
-autoIncrement = require('mongoose-auto-increment');                                   // Auto-Increment ID
+const mongoose = require("mongoose");                                                                  // Linking Mongoose module.
+autoIncrement = require('mongoose-auto-increment');                                                    // Auto-Increment ID
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 
-const termEnglishSchema = require("./msc-termEnglish.js");                                // Assigning Mongoose Schema to variable.
+const termEnglishSchema = require("./msc-termEnglish.js");                                             // Assigning Mongoose Schema to variable.
 const termNonEnglishSchema = require("./msc-termNonEnglsh");   
 const definitionSchema = require("./msc-definition");   
 
@@ -21,20 +21,21 @@ const definitionSchema = require("./msc-definition");
 /******************************************************************************
  * Initializes Connection to Database                                         *
  ******************************************************************************/
-let Dictionary;                                                                        // Collection Properties
+let Dictionary;                                                                                        // Collection Properties
 module.exports.initialize = function() {
     return new Promise(function(resolve, reject) {
-        //let db = mongoose.createConnection("mongodb://dbuser:1234@cluster1-shard-00-00-6v28c.mongodb.net:27017,cluster1-shard-00-01-6v28c.mongodb.net:27017,cluster1-shard-00-02-6v28c.mongodb.net:27017/test?ssl=true&replicaSet=cluster1-shard-0&authSource=admin&retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+        let db = mongoose.createConnection("mongodb://dbuser:1234@cluster1-shard-00-00-6v28c.mongodb.net:27017,cluster1-shard-00-01-6v28c.mongodb.net:27017,cluster1-shard-00-02-6v28c.mongodb.net:27017/db-a2?ssl=true&replicaSet=cluster1-shard-0&authSource=admin&retryWrites=true&w=majority", { connectTimeoutMS: 5000, useUnifiedTopology: true });
+        //.catch(err => {console.log(err)});
 
-        let db = mongoose.createConnection("mongodb://192.168.0.21:27017");
+        //let db = mongoose.createConnection("mongodb://192.168.0.18:27017/db-a2");
         //autoIncrement.initialize(db);
 
         db.on('error', function (err) {
-            reject(console.log(err.message));                                        // If connection error, Reject the promise with the provided error.
+            reject(console.log(err.message));                                                         // If connection error, Reject the promise with the provided error.
         });
         db.once('open', function () {
             //vehicleSchema.plugin(autoIncrement.plugin, 'vehicles');
-            Dictionary = db.model("db-a2", termEnglishSchema, "englishterms");                 // Create a dictionary model from schema above.
+            Dictionary = db.model("englishterms", termEnglishSchema, "englishterms");                 // Create a dictionary model from schema above.
             
             console.log(Dictionary);
             resolve(console.log("Database Connected"));
@@ -52,7 +53,7 @@ module.exports.termsEnglishGetAll = function() {
         Dictionary.find()
           //.limit(10)
           //.lean()
-          //.sort({wordEnglish: 'asc'})
+          .sort({wordEnglish: 'asc'})
           .exec(function (error, items) {
             if (error) {
               // Query error
@@ -67,7 +68,7 @@ module.exports.termsEnglishGetAll = function() {
 /*******************************************************************************/
 
 /******************************************************************************
- * Retreives individual vehicle by VIN from the Database                       *
+ * Retreives individual English Term by ID from the Database                  *
  ******************************************************************************/
 module.exports.termsEnglishGetByID = function (id) {
     console.log("Getting English Term By ID...");
@@ -91,7 +92,7 @@ module.exports.termsEnglishGetByID = function (id) {
 /*******************************************************************************/
 
 /******************************************************************************
- * Retreives individual vehicle by ID from the Database                       *
+ * Retreives individual English Term by Name from the Database                *
  ******************************************************************************/
 module.exports.termsEnglishGetName = function (text) {
     console.log("Getting English Term By Name...");
@@ -118,7 +119,7 @@ module.exports.termsEnglishGetName = function (text) {
 };
 /*******************************************************************************/
 /******************************************************************************
- * Add Vehicle to the Database                                                *
+ * Add English Term to the Database                                           *
  ******************************************************************************/
 module.exports.termEnglishAdd = function (newItem) {
     console.log("Adding English Term to Collection...");
@@ -138,7 +139,7 @@ module.exports.termEnglishAdd = function (newItem) {
 /*******************************************************************************/
 
 /******************************************************************************
- * Edit existing vehicle from the Database                                    *
+ * Edit existing English Term from the Database                               *
  ******************************************************************************/
 module.exports.termEnglishEdit = function (changes) {
     console.log("Editing English Term in Collection...");
@@ -179,7 +180,7 @@ module.exports.termEnglishEdit = function (changes) {
 /*******************************************************************************/
 
 /******************************************************************************
- * Delete vehicle from the Database                                           *
+ * Delete English Term from the Database                                      *
  ******************************************************************************/
 module.exports.termEnglishDelete = function (itemId) {
     console.log("Deleting English Term By ID...");
