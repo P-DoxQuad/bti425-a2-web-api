@@ -26,7 +26,7 @@ var termNonEnglishSchema = new Schema({
   fieldOfStudy: String,
   helpYes: Number,
   helpNo: Number,
-  definition: [definitionScheme]
+  definitions: [definitionScheme]
 }, {
   versionKey: true
 }

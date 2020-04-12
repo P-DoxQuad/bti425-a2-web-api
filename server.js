@@ -4,9 +4,9 @@
  * No part of this assignment has been copied manually or electronically from any other source 
  * (including 3rd-party web sites) or distributed to other students. 
  * 
- * Name: Michael Dzura Student ID: 033566100 Date: 02/11/2020
+ * Name: Michael Dzura Student ID: 033566100 Date: 03/14/2020
  * 
- * Online (Heroku) URL: https://bti425-a1-web-api.herokuapp.com
+ * Online (Heroku) URL: https://bti425-a2-web-api.herokuapp.com
  * ********************************************************************************/
 
 
@@ -40,7 +40,9 @@ app.use(bodyParser.urlencoded({extended: true}));
  * **************************************************************************/
 app.get("/api", function(req, res) {
   const links = [];
-  links.push({ "rel": "collection", "href": "/api/terms/english", "methods": "GET,POST" });
+  links.push({ "rel": "collection", "href": "/api/terms/english", "methods": "GET" });
+  links.push({ "rel": "collection", "href": "/api/terms/english/:name", "methods": "GET,POST" });
+  links.push({ "rel": "collection", "href": "/api/terms/english/id/:id", "methods": "GET,POST" });
   links.push({ "rel": "collection", "href": "/api/terms/other", "methods": "GET,PUT,DELETE" });
   //links.push({ "rel": "collection", "href": "/api/vehicles", "methods": "GET,PUT,DELETE" });
   const linkObject = { 
@@ -48,7 +50,7 @@ app.get("/api", function(req, res) {
     "apiVersion": "1.0",
     "apiAuthor": "Michael Dzura", 
     "apiName": "Wep API for Assignment #2",
-    "apiDescription": "Dictionary Data for Techical Terms"
+    "apiDescription": "Dictionary Data for Technical Terms"
   };
   res.json(linkObject);
 });
@@ -69,6 +71,7 @@ app.get("/api/terms/english", function (req, res) {
   // Call the manager method
   manager.termsEnglishGetAll()
          .then(function (data) {
+           //console.log("Data", data);
            res.json(data);
          })
          .catch(function (error) {
@@ -90,8 +93,8 @@ app.get("/api/terms/english/:text", function(req, res) {
 /************************************************************/
 
 // ******************* Get one by id **********************//
-app.get("/api/vehicles/:id", function (req, res) {
-  manager.vehicleGetById(req.params.id)                         // Call the manager method
+app.get("/api/term/english/details/:id", function (req, res) {
+  manager.termsEnglishGetByID(req.params.id)                         // Call the manager method
          .then(function (data) {
           res.json(data);
   })
@@ -102,14 +105,17 @@ app.get("/api/vehicles/:id", function (req, res) {
 /************************************************************/
 
 // ********************** Add new **************************//
-app.post("/api/vehicle", function (req, res) {
+app.post("/api/term/english/add", function (req, res) {
+
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
   res.setHeader("Access-Control-Allow-Headers", "Authorization, Cache-Control, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+
   console.log("POSTING data");
   
-  manager.vehicleAdd(req.body)                                  // Call the manager method
+  manager.termEnglishAdd(req.body)                                  // Call the manager method
          .then(function(data) {
-           res.json(data);
+           console.log(data);
+           res.status(201).json(data);
          })
          .catch(function(error) {
             res.status(500).json({ "message": error });
@@ -118,7 +124,11 @@ app.post("/api/vehicle", function (req, res) {
 /*************************************************************/
 
 // ***************** Edit existing **************************//
-app.put("/api/vehicles/:id", function (req, res) {
+app.put("/api/term/english/edit/:id", function (req, res) {
+
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader("Access-Control-Allow-Headers", "Authorization, Cache-Control, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+
 
   console.log("By ID: " + req.body.id);
 
@@ -127,7 +137,7 @@ app.put("/api/vehicles/:id", function (req, res) {
   }
   else {
     
-    manager.vehicleEdit(req.body)                               // Call the manager method
+    manager.termEnglishEdit(req.params)                               // Call the manager method
     .then(function(data) {
       res.json(data);
     })
@@ -139,9 +149,9 @@ app.put("/api/vehicles/:id", function (req, res) {
 /*************************************************************/
 
 // **************** Delete item ****************************//
-app.delete("/api/vehicles/:id", function (req, res) {
+app.delete("/api/term/english/delete/:id", function (req, res) {
   
-  manager.vehicleDelete(req.params.id)                        // Call the manager method
+  manager.termEnglishDelete(req.params.id)                        // Call the manager method
          .then(function(data) {
            res.json(data);
          })

@@ -5,7 +5,7 @@
  ******************************************************************************/ 
 
 const mongoose = require("mongoose");                                                                  // Linking Mongoose module.
-autoIncrement = require('mongoose-auto-increment');                                                    // Auto-Increment ID
+//autoIncrement = require('mongoose-auto-increment');                                                    // Auto-Increment ID
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -60,7 +60,7 @@ module.exports.termsEnglishGetAll = function() {
               return reject(console.log(error.message));
             }
             // Found, a collection will be returned 
-            console.log(items);
+            //console.log(items);
             return resolve(items);
           });
     });
@@ -82,6 +82,7 @@ module.exports.termsEnglishGetByID = function (id) {
             // Check for an item
             if (data) {
                 // Found, one object will be returned
+                console.log(data);
                 return resolve(data);
             } else {
                 return reject('Not found');
@@ -125,15 +126,60 @@ module.exports.termEnglishAdd = function (newItem) {
     console.log("Adding English Term to Collection...");
     console.log(newItem);
     return new Promise(function (resolve, reject) {
+
+        //var newTerm = new Dictionary(newItem);
         // Find one specific document
         Dictionary.create(newItem, function (error, item) {
             if (error) {
               // Cannot add item
-              return reject(console.log(error.message));
+              console.log(error.message);
+              return reject(error.message);
             }
             //Added object will be returned
+            console.log(item);
             return resolve(item);
         });
+        /*newItem.save(function (error, item) {
+            if (error) {
+              // Cannot add item
+              console.log(error.message);
+              return reject(error.message);
+            }
+            //Added object will be returned
+            console.log(item);
+            return resolve(item);
+        });*/
+
+        /*Dictionary.create({
+            "wordEnglish": newItem.wordEnglish,
+            "wordNonEnglish": newItem.wordNonEnglish,
+            "wordExpanded": newItem.wordExpanded,
+            "languageCode": newItem.languageCode,
+            "image": newItem.image,
+            "imageType": newItem.imageType,
+            "audio": newItem.audio,
+            "audioType": newItem.audioType,
+            "linkAuthoritative": newItem.linkAuthoritative,
+            "linkWikipedia": newItem.linkWikipedia,
+            "linkYouTube": newItem.linkYouTube,
+            "authorName": newItem.authorName,
+            "dateCreated": new Date(),
+            "dateRevised": newItem.dateRevised,
+            "fieldOfStudy": newItem.fieldOfStudy,
+            "helpYes": 0,
+            "helpNo": 0,
+            "definitions": newItem.definitions[0].definition
+        }, function (error, item) {
+            if (error) {
+              // Cannot add item
+              console.log(error.message);
+              return reject(error.message);
+            }
+            //Added object will be returned
+            console.log(item);
+            return resolve(item);
+        });*/
+
     });
 };
 /*******************************************************************************/
@@ -143,25 +189,36 @@ module.exports.termEnglishAdd = function (newItem) {
  ******************************************************************************/
 module.exports.termEnglishEdit = function (changes) {
     console.log("Editing English Term in Collection...");
-    console.log("Changes: " + changes);
+    console.log("Changes: " + changes.id + ", " + changes.wordEnglish);
 
     return new Promise(function (resolve, reject) {
         // Find one specific document
         Dictionary.findByIdAndUpdate(changes.id, 
             {
-                id: changes.id,
-                make: changes.make,
-                model: changes.model,
-                colour: changes.colour,
-                year: changes.year,
-                vin: changes.vin,
-                msrp: changes.msrp,
-                photo: changes.photo,
-                description: changes.description,
-                purchaseDate: changes.purchaseDate,
-                purchaserName: changes.purchaserName,
-                purchaserEmail: changes.purchaserEmail,
-                pricePaid: changes.pricePaid
+                wordEnglish: changes.wordEnglish,
+                wordNonEnglish: changes.wordNonEnglish,
+                wordExpanded: changes.wordExpanded,
+                languageCode: changes.languageCode,
+                image: changes.images,
+                imageType: changes.imageType,
+                audio: changes.audio,
+                audioType: changes.audioType,
+                linkAuthoritative: changes.linkAuthoritative,
+                linkWikipedia: changes.linkWikipedia,
+                linkYouTube: changes.linkYouTube,
+                authorName: changes.authorName,
+                dateCreated: changes.dateCreated,
+                dateRevised: changes.dateRevised,
+                fieldOfStudy: changes.fieldOfStudy,
+                helpYes: changes.helpYes,
+                helpNo: changes.helpNo,
+                definitions: [{
+                    authorName: changes.definitions.authorName,
+                    dateCreated: changes.definitions.dateCreated,
+                    definition: changes.definitions.definition,
+                    quality: changes.definitions.quality,
+                    like: changes.definitions.like
+                }]
             }, function (error, item) {
             if (error) {
               // Cannot edit item

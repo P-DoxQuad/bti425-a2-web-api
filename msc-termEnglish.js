@@ -24,7 +24,7 @@ var termEnglishSchema = new Schema({
   fieldOfStudy: String,
   helpYes: Number,
   helpNo: Number,
-  definition: [definitionScheme]
+  definitions: [definitionScheme]
 }, {
 versionKey: true
 }
