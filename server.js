@@ -26,6 +26,7 @@ const manager = require("./manager.js");                  // MongoDB Data model 
 
 
 app.use(bodyParser.json());                               // Add support for incoming JSON entities.
+//app.use(express.json());
 app.use(cors());                                          // Add support for CORS.
 
 
