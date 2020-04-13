@@ -48,12 +48,12 @@ app.get("/api", function(req, res) {
   links.push({ "rel": "collection", "href": "/api/term/english/delete/:id", "methods": "DELETE" });
   //links.push({ "rel": "collection", "href": "/api/terms/other", "methods": "GET,PUT,DELETE" });
   //links.push({ "rel": "collection", "href": "/api/vehicles", "methods": "GET,PUT,DELETE" });
-  const linkObject = { 
-    "links": links, 
+  const linkObject = {   
     "apiVersion": "1.0",
     "apiAuthor": "Michael Dzura", 
     "apiName": "Web API for Assignment #2",
-    "apiDescription": "Dictionary Data for Technical Terms"
+    "apiDescription": "Dictionary Data for Technical Terms",
+    "links": links
   };
   res.json(linkObject);
 });
