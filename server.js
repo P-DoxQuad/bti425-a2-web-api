@@ -41,15 +41,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.get("/api", function(req, res) {
   const links = [];
   links.push({ "rel": "collection", "href": "/api/terms/english", "methods": "GET" });
-  links.push({ "rel": "collection", "href": "/api/terms/english/:name", "methods": "GET,POST" });
-  links.push({ "rel": "collection", "href": "/api/terms/english/id/:id", "methods": "GET,POST" });
-  links.push({ "rel": "collection", "href": "/api/terms/other", "methods": "GET,PUT,DELETE" });
+  links.push({ "rel": "collection", "href": "/api/terms/english/:name", "methods": "GET" });
+  links.push({ "rel": "collection", "href": "/api/term/english/add", "methods": "POST" });
+  links.push({ "rel": "collection", "href": "/api/term/english/details/:id", "methods": "GET" });
+  links.push({ "rel": "collection", "href": "/api/term/english/edit/:id", "methods": "PUT" });
+  links.push({ "rel": "collection", "href": "/api/term/english/delete/:id", "methods": "DELETE" });
+  //links.push({ "rel": "collection", "href": "/api/terms/other", "methods": "GET,PUT,DELETE" });
   //links.push({ "rel": "collection", "href": "/api/vehicles", "methods": "GET,PUT,DELETE" });
   const linkObject = { 
     "links": links, 
     "apiVersion": "1.0",
     "apiAuthor": "Michael Dzura", 
-    "apiName": "Wep API for Assignment #2",
+    "apiName": "Web API for Assignment #2",
     "apiDescription": "Dictionary Data for Technical Terms"
   };
   res.json(linkObject);
