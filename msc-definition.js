@@ -10,7 +10,8 @@ var definitionSchema = new Schema({
   dateCreated: String,
   definition: String,
   quality: Number,
-  likes: Number
+  likes: Number,
+  
 });
 
 // Make schema available to the application

@@ -47,9 +47,9 @@ module.exports.initialize = function() {
 /******************************************************************************
  * Retreives list of all vehicles from the Database                           *
  ******************************************************************************/
-module.exports.termsEnglishGetAll = function() {
+module.exports.termsEnglishGetAll = async function() {
     console.log("Getting All English Terms...");
-    return new Promise(function(resolve, reject) {
+    return await new Promise(function(resolve, reject) {
         Dictionary.find()
           //.limit(10)
           //.lean()
@@ -70,9 +70,9 @@ module.exports.termsEnglishGetAll = function() {
 /******************************************************************************
  * Retreives individual English Term by ID from the Database                  *
  ******************************************************************************/
-module.exports.termsEnglishGetByID = function (id) {
+module.exports.termsEnglishGetByID = async function (id) {
     console.log("Getting English Term By ID...");
-    return new Promise(function (resolve, reject) {
+    return await new Promise(function (resolve, reject) {
         // Find one specific document
         Dictionary.findOne({"_id": id}, function(error, data) {
             if (error) {
@@ -122,65 +122,79 @@ module.exports.termsEnglishGetName = function (text) {
 /******************************************************************************
  * Add English Term to the Database                                           *
  ******************************************************************************/
-module.exports.termEnglishAdd = function (newItem) {
+module.exports.termEnglishAdd = async function (newItem) {
     console.log("Adding English Term to Collection...");
-    console.log(newItem);
-    return new Promise(function (resolve, reject) {
+    //console.log(newItem);
+    return await new Promise(function (resolve, reject) {
 
         //var newTerm = new Dictionary(newItem);
         // Find one specific document
+
         Dictionary.create(newItem, function (error, item) {
             if (error) {
-              // Cannot add item
-              console.log(error.message);
-              return reject(error.message);
+                console.log("Database:", error.message);
+                return reject(error.message);
             }
-            //Added object will be returned
-            console.log(item);
             return resolve(item);
-        });
-        /*newItem.save(function (error, item) {
-            if (error) {
-              // Cannot add item
-              console.log(error.message);
-              return reject(error.message);
-            }
-            //Added object will be returned
-            console.log(item);
-            return resolve(item);
-        });*/
-
-        /*Dictionary.create({
-            "wordEnglish": newItem.wordEnglish,
-            "wordNonEnglish": newItem.wordNonEnglish,
-            "wordExpanded": newItem.wordExpanded,
-            "languageCode": newItem.languageCode,
-            "image": newItem.image,
-            "imageType": newItem.imageType,
-            "audio": newItem.audio,
-            "audioType": newItem.audioType,
-            "linkAuthoritative": newItem.linkAuthoritative,
-            "linkWikipedia": newItem.linkWikipedia,
-            "linkYouTube": newItem.linkYouTube,
-            "authorName": newItem.authorName,
-            "dateCreated": new Date(),
-            "dateRevised": newItem.dateRevised,
-            "fieldOfStudy": newItem.fieldOfStudy,
-            "helpYes": 0,
-            "helpNo": 0,
-            "definitions": newItem.definitions[0].definition
-        }, function (error, item) {
-            if (error) {
-              // Cannot add item
-              console.log(error.message);
-              return reject(error.message);
-            }
-            //Added object will be returned
-            console.log(item);
-            return resolve(item);
-        });*/
-
+        })
+        
     });
+};
+/*******************************************************************************/
+
+/******************************************************************************
+ * Edit and add to an existing English Term from the Database                 *
+ ******************************************************************************/
+module.exports.termEnglishAddDef = async function (itemID, newItem) {
+    //console.log("Adding New Definition in " + changes.wordEnglish);
+    //console.log("Changes: " + changes.id + ", " + changes.wordEnglish);
+
+    //return new Promise(function (resolve, reject) {
+
+    let newDef = await Dictionary.findById(itemID);
+    console.log("Body:", newItem);
+       // console.log("MongoDB:", newDef);
+    if (newDef) {
+        console.log("Hello World");
+        newDef.definitions.push(newItem);
+        console.log("Result:", newDef.definitions);
+        await newDef.save();
+        return newDef;
+    } else {
+        throw "Not Found";
+        //return reject("Not Found");
+    }
+    //});
+};
+/*******************************************************************************/
+
+/******************************************************************************
+ * Increase the 'Like' counter for a efinition                                *
+ ******************************************************************************/
+module.exports.likeDefinition = async function (itemID, newItem) {
+    //console.log("Adding New Definition in " + changes.wordEnglish);
+    //console.log("Changes: " + changes.id + ", " + changes.wordEnglish);
+
+    if (itemID !== newItem) {
+        throw "Not Found";
+    }
+
+
+    let like = await Dictionary.findOne({"definitions._id": itemID});
+    //console.log("Body:", newItem);
+       // console.log("MongoDB:", newDef);
+    if (like) {
+        //console.log("Hello World");
+        let def = like.definitions.id(itemID);
+        def.likes++;
+        //console.log("Result:", newDef.definitions);
+        await like.save();
+        return like;
+    } else {
+        throw "Not Found";
+        //return reject("Not Found");
+    }
+    //});
 };
 /*******************************************************************************/
 
@@ -239,10 +253,10 @@ module.exports.termEnglishEdit = function (changes) {
 /******************************************************************************
  * Delete English Term from the Database                                      *
  ******************************************************************************/
-module.exports.termEnglishDelete = function (itemId) {
+module.exports.termEnglishDelete = async function (itemId) {
     console.log("Deleting English Term By ID...");
     console.log(itemId);
-    return new Promise(function (resolve, reject) {
+    return await new Promise(function (resolve, reject) {
         // Find one specific document
         Dictionary.deleteOne({"_id": itemId}, function (error) {
             if (error) {

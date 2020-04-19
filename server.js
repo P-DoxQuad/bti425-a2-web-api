@@ -23,6 +23,7 @@ const HTTP_PORT = process.env.PORT || 8080;               // Sets the http port 
 
 
 const manager = require("./manager.js");                  // MongoDB Data model and API request handling.
+//const manager = m();
 
 
 app.use(bodyParser.json());                               // Add support for incoming JSON entities.
@@ -109,11 +110,7 @@ app.get("/api/term/english/details/:id", function (req, res) {
 /************************************************************/
 
 // ********************** Add new **************************//
-app.post("/api/term/english/add", function (req, res) {
-
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-  res.setHeader("Access-Control-Allow-Headers", "Authorization, Cache-Control, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-
+app.post("/api/term/english/", function (req, res) {
   console.log("POSTING data");
   
   manager.termEnglishAdd(req.body)                                  // Call the manager method
@@ -127,12 +124,36 @@ app.post("/api/term/english/add", function (req, res) {
 });
 /*************************************************************/
 
+// ***************** Add Definition **************************//
+app.put("/api/term/english/:id/add-definition", function (req, res) {
+
+  console.log("By ID: " + req.params.id + "\n " + req.body);
+    
+  manager.termEnglishAddDef(req.params.id, req.body)                               // Call the manager method
+         .then(function(data) {
+      res.json(data);
+      }).catch(function(error) {
+        res.status(500).json({ "message": error });
+  })
+});
+/*************************************************************/
+
+// ***************** Edit existing **************************//
+app.put("/api/term/english/:id/up-likecount-def", function (req, res) {
+
+  console.log("By ID: " + req.params.id + "\n " + req.body);
+    
+  manager.likeDefinition(req.params.id, req.body)                               // Call the manager method
+         .then(function(data) {
+      res.json(data);
+      }).catch(function(error) {
+        res.status(500).json({ "message": error });
+  })
+});
+/*************************************************************/
+
 // ***************** Edit existing **************************//
 app.put("/api/term/english/edit/:id", function (req, res) {
-
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-  res.setHeader("Access-Control-Allow-Headers", "Authorization, Cache-Control, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-
 
   console.log("By ID: " + req.body.id);
 

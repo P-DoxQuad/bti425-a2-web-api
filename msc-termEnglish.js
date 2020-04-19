@@ -3,7 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var definitionScheme = require("./msc-definition.js");
+var definitionSchema = require("./msc-definition.js");
 
 // English Term Schema
 var termEnglishSchema = new Schema({
@@ -24,11 +24,8 @@ var termEnglishSchema = new Schema({
   fieldOfStudy: String,
   helpYes: Number,
   helpNo: Number,
-  definitions: [definitionScheme]
-}, {
-versionKey: true
-}
-);
+  definitions: [definitionSchema]
+});
 
 // Make schema available to the application
 module.exports = termEnglishSchema;
